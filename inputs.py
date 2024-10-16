@@ -1,18 +1,23 @@
 import time
 from pynput import mouse, keyboard
 from pynput.mouse import Controller, Button
+from pynput.keyboard import Key, Controller as Keyboard_Controller
 import pyautogui
 
 isRunning = False
 
 movements = []
 checkpoints = []
+
 mouse_controller = Controller()
+keyboard_controller = Keyboard_Controller()
+
 last_time = time.time()
 click_time = time.time()
 release_time = time.time()
-
 last_click_time = time.time()
+
+last_key_time = time.time()
 
 screen_width, screen_height = pyautogui.size()
 print(f'Resolução da tela: {screen_width}x{screen_height}')
@@ -51,8 +56,20 @@ def playMacro(movements):
 
                     if time_interval > 0:
                         time.sleep(time_interval)
-                        
+
                     mouse_controller.release(Button.left)
+            
+            if 'keyboard_key' in checkpoint:
+                    keyboard_controller.press(checkpoint['keyboard_key'])
+
+                    if i > 0 and 'key_time' in checkpoint:
+                        time_press = checkpoint['key_time']
+                        time_interval = last_key_time - time_press 
+
+                        if time_interval > 0:
+                            time.sleep(time_interval)
+                    
+                    keyboard_controller.release(checkpoint['keyboard_key'])
 
 
 def on_press(key):
@@ -90,7 +107,8 @@ def on_release(key):
     # ))
 
     if key != keyboard.Key.right:
-        movement = {"keyboard": key}
+        last_key_time = time.time()
+        movement = {"keyboard_key": key, "key_time": last_key_time}
         movements.append(movement)
  
 def on_move(x,  y):
