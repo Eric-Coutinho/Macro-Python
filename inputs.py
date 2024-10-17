@@ -8,6 +8,7 @@ isRunning = False
 
 movements = []
 checkpoints = []
+special_keys = [Key.ctrl_l, Key.alt_l, Key.alt_r, Key.shift, Key.cmd]
 
 mouse_controller = Controller()
 keyboard_controller = Keyboard_Controller()
@@ -30,16 +31,17 @@ def running():
 
 def playMacro(movements):
     global last_click_time
+
     for movement in movements:
         checkpoints = movement['checkpoint']
+
         for i, checkpoint in enumerate(checkpoints):
             # print(checkpoint)
+            
             if 'mouse_position' in checkpoint:
                 mouse_position = checkpoint['mouse_position']
-                # print('Position: ', mouse_position)
 
                 mouse_controller.position = (mouse_position)
-                # print(f'Movendo o mouse para : {mouse_position}')
  
                 if i > 0 and 'time_interval' in checkpoint:
                     time_interval = checkpoint['time_interval']
@@ -60,33 +62,43 @@ def playMacro(movements):
                     mouse_controller.release(Button.left)
     
             if 'keyboard_key' in checkpoint:
-                print(checkpoint['keyboard_key'])
+                # print(checkpoint['keyboard_key'])
 
-                # if checkpoint['keyboard_key'] == Key.alt_l:
-                #     if i + 1 < len(checkpoints):   
-                #         next_checkpoint = checkpoints[i + 1]    
-                #         if next_checkpoint['keyboard_key'] == Key.tab:
-                #             print('alt tab')    
-                #             keyboard_controller.press(Key.alt_l)
-                #             time.sleep(0.1)  # Aguarda um pequeno intervalo 
-                            
-                #             keyboard_controller.press(Key.tab)
-                #             time.sleep(0.5)  # Aguarda mais um pouco
-                #             keyboard_controller.release(Key.tab)
-                #             time.sleep(0.1)
-                #             keyboard_controller.release(Key.alt_l)
-                #     time.sleep(0.6)
+                if i + 1 < len(checkpoints):
+                    next_checkpoint = checkpoints[i+1]
 
-                keyboard_controller.press(checkpoint['keyboard_key'])
-        
-                if i > 0 and 'key_time' in checkpoint:
-                    time_press = checkpoint['key_time']
-                    time_interval = last_key_time - time_press 
+                if 'special_key' in next_checkpoint:
+                    print('current: ', checkpoint) 
+                    print('next: ', next_checkpoint)
 
-                    if time_interval > 0:
-                        time.sleep(time_interval)
-                
-                keyboard_controller.release(checkpoint['keyboard_key'])
+                    with keyboard_controller.pressed(next_checkpoint['keyboard_key']):
+                        keyboard_controller.press(checkpoint['keyboard_key'])
+
+                        if i > 0 and 'key_time' in checkpoint:
+                            time_press = checkpoint['key_time']
+                            time_interval = last_key_time - time_press 
+
+                            if time_interval > 0:
+                                time.sleep(time_interval)
+
+                        keyboard_controller.release(checkpoint['keyboard_key'])
+
+                    # aaa
+                    # aaa
+                    # bbb
+                    # ccc
+
+                else:
+                    keyboard_controller.press(checkpoint['keyboard_key'])
+            
+                    if i > 0 and 'key_time' in checkpoint:
+                        time_press = checkpoint['key_time']
+                        time_interval = last_key_time - time_press 
+
+                        if time_interval > 0:
+                            time.sleep(time_interval)
+                    
+                    keyboard_controller.release(checkpoint['keyboard_key'])
 
 def on_press(key):
     global isRunning
@@ -102,6 +114,7 @@ def on_press(key):
         isRunning = False
         print("Parando listeners")
         playMacro(movements = checkpoints)
+
         return False
 
     if key == keyboard.Key.right:
@@ -111,11 +124,12 @@ def on_press(key):
 
 def on_release(key):
     running()
-    global movements
+    global movements    
 
     if key != keyboard.Key.right:
         last_key_time = time.time()
-        movement = {"keyboard_key": key, "key_time": last_key_time}
+        movement = {"keyboard_key": key, "key_time": last_key_time, "special_key": special_keys.__contains__(key) if True else False}
+        print(movement)
         movements.append(movement)
  
 def on_move(x,  y):
@@ -138,6 +152,7 @@ def on_click(x, y, button, pressed):
         return False
 
     current_time = time.time()
+
     if pressed:
         click_time = current_time
         movement = {"mouse_clicked": (x, y), "time_clicked": click_time}
