@@ -29,9 +29,21 @@ def running():
         return True
     return False
 
+def wait_for_right_arrow():
+    right_arrow_pressed = False
+
+    def on_press(key):
+        nonlocal right_arrow_pressed
+        if key == keyboard.Key.right:
+            right_arrow_pressed = True
+            return False 
+
+    with keyboard.Listener(on_press=on_press) as listener:
+        listener.join()
+
 def playMacro(movements):
     global last_click_time
-
+    print(movements)
     for movement in movements:
         checkpoints = movement['checkpoint']
 
@@ -71,7 +83,7 @@ def playMacro(movements):
                     print('current: ', checkpoint) 
                     print('next: ', next_checkpoint)
 
-                    with keyboard_controller.pressed(next_checkpoint['keyboard_key']):
+                    with keyboard_controller.pressed(next_checkpoint['keyboard_key'].value):
                         keyboard_controller.press(checkpoint['keyboard_key'])
 
                         if i > 0 and 'key_time' in checkpoint:
@@ -83,7 +95,6 @@ def playMacro(movements):
 
                         keyboard_controller.release(checkpoint['keyboard_key'])
 
-                    # aaa
                     # aaa
                     # bbb
                     # ccc
@@ -99,6 +110,9 @@ def playMacro(movements):
                             time.sleep(time_interval)
                     
                     keyboard_controller.release(checkpoint['keyboard_key'])
+        if len(checkpoints) > 1:
+            print("Aperte a seta direita para continuar...")
+            wait_for_right_arrow()
 
 def on_press(key):
     global isRunning
@@ -128,7 +142,7 @@ def on_release(key):
 
     if key != keyboard.Key.right:
         last_key_time = time.time()
-        movement = {"keyboard_key": key, "key_time": last_key_time, "special_key": special_keys.__contains__(key) if True else False}
+        movement = {"keyboard_key": key.value, "key_time": last_key_time, "special_key": special_keys.__contains__(key) if True else False}
         print(movement)
         movements.append(movement)
  
