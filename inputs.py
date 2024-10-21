@@ -3,6 +3,7 @@ from pynput import mouse, keyboard
 from pynput.mouse import Controller, Button
 from pynput.keyboard import Key, Controller as Keyboard_Controller
 import pyautogui
+import sys
 
 isRunning = False
 
@@ -20,6 +21,9 @@ last_click_time = time.time()
 
 last_key_time = time.time()
 
+confirm = keyboard.Key.right
+cancel = keyboard.Key.esc
+
 screen_width, screen_height = pyautogui.size()
 print(f'Resolução da tela: {screen_width}x{screen_height}')
 
@@ -29,14 +33,17 @@ def running():
         return True
     return False
 
-def wait_for_right_arrow():
+def wait_for_confirm():
     right_arrow_pressed = False
 
     def on_press(key):
         nonlocal right_arrow_pressed
-        if key == keyboard.Key.right:
+        if key == confirm:
             right_arrow_pressed = True
             return False 
+        elif key == cancel:
+            print('Execução cancelada pelo usuário.')
+            sys.exit()
 
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
@@ -111,8 +118,8 @@ def playMacro(movements):
                     
                     keyboard_controller.release(checkpoint['keyboard_key'])
         if len(checkpoints) > 1:
-            print("Aperte a seta direita para continuar...")
-            wait_for_right_arrow()
+            print("Aperte a {confirm.value} para continuar...")
+            wait_for_confirm()
 
 def on_press(key):
     global isRunning
@@ -121,7 +128,7 @@ def on_press(key):
 
     running()
 
-    if key == keyboard.Key.esc:
+    if key == cancel:
         checkpoint = {"checkpoint": movements.copy()}
         checkpoints.append(checkpoint)
         movements.clear()
@@ -131,7 +138,7 @@ def on_press(key):
 
         return False
 
-    if key == keyboard.Key.right:
+    if key == confirm:
         checkpoint = {"checkpoint": movements.copy()}
         checkpoints.append(checkpoint)
         movements.clear()
@@ -140,7 +147,7 @@ def on_release(key):
     running()
     global movements    
 
-    if key != keyboard.Key.right:
+    if key != confirm:
         last_key_time = time.time()
         movement = {"keyboard_key": key.value, "key_time": last_key_time, "special_key": special_keys.__contains__(key) if True else False}
         print(movement)
