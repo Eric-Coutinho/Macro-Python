@@ -4,6 +4,7 @@ from pynput.mouse import Controller, Button
 from pynput.keyboard import Key, Controller as Keyboard_Controller
 import pyautogui
 import sys
+import os
 
 isRunning = False
 
@@ -33,6 +34,12 @@ def running():
         return True
     return False
 
+def check_for_esc():
+    def on_press(key):
+        if key == keyboard.Key.esc:
+            print('Execução cancelada pelo usuário.')
+            os._exit(1)
+
 def wait_for_confirm():
     right_arrow_pressed = False
 
@@ -43,14 +50,16 @@ def wait_for_confirm():
             return False 
         elif key == cancel:
             print('Execução cancelada pelo usuário.')
-            sys.exit()
+            os._exit(1)
 
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
 
 def playMacro(movements):
     global last_click_time
-    print(movements)
+
+    check_for_esc()
+
     for movement in movements:
         checkpoints = movement['checkpoint']
 
