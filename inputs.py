@@ -55,6 +55,30 @@ def wait_for_confirm():
     with keyboard.Listener(on_press=on_press) as listener:
         listener.join()
 
+def clipboard(char):
+    time.sleep(0.1)
+    pyautogui.hotkey('ctrl', char)
+    time.sleep(0.1)
+
+def paste_clipboard():
+    time.sleep(0.1)
+    pyautogui.hotkey('ctrl', 'v')
+
+def is_ctrl_unicode(code: str) -> bool:
+    return len(code) == 1 and 0 < ord(code) <= 26
+
+def get_unicode_order_from_char(char: str) -> int:
+    if len(char) != 1:
+        return -1
+    return ord(char)
+
+def character_from_ctrl_unicode(order: int) -> str:
+    if not 0 < order < 26:
+        return
+    pool = "abcdefghijklmnopqrstuvwxyz"
+    assert len(pool) == 26
+    return pool[order-1]
+
 def playMacro(movements):
     global last_click_time
 
@@ -99,19 +123,31 @@ def playMacro(movements):
                     print('current: ', checkpoint) 
                     print('next: ', next_checkpoint)
 
-                    with keyboard_controller.pressed(next_checkpoint['keyboard_key'].value):
-                        keyboard_controller.press(checkpoint['keyboard_key'])
+                    special_key = next_checkpoint['keyboard_key']
+                    # ARRUMAR AQUI
+                    print(checkpoint['keyboard_key'])
+                    is_ctrl = is_ctrl_unicode(checkpoint['keyboard_key'])
+                    
+                    if is_ctrl != -1:
+                        ctrl_code = get_unicode_order_from_char(is_ctrl)
+                        char = character_from_ctrl_unicode(ctrl_code)
+                        print(char)
 
-                        if i > 0 and 'key_time' in checkpoint:
-                            time_press = checkpoint['key_time']
-                            time_interval = last_key_time - time_press 
+                    # keyboard_controller.press(special_key)
 
-                            if time_interval > 0:
-                                time.sleep(time_interval)
+                    # with keyboard_controller.pressed(next_checkpoint['keyboard_key']):
+                    #     keyboard_controller.press(checkpoint['keyboard_key'])
 
-                        keyboard_controller.release(checkpoint['keyboard_key'])
+                    #     if i > 0 and 'key_time' in checkpoint:
+                    #         time_press = checkpoint['key_time']
+                    #         time_interval = last_key_time - time_press 
 
-                    # aaa
+                    #         if time_interval > 0:
+                    #             time.sleep(time_interval)
+
+                    #     keyboard_controller.release(checkpoint['keyboard_key'])
+
+                    # aaa                    
                     # bbb
                     # ccc
 
@@ -126,8 +162,9 @@ def playMacro(movements):
                             time.sleep(time_interval)
                     
                     keyboard_controller.release(checkpoint['keyboard_key'])
+
         if len(checkpoints) > 1:
-            print("Aperte a {confirm.value} para continuar...")
+            print("Aperte a tecla {confirm.value} para continuar...")
             wait_for_confirm()
 
 def on_press(key):
@@ -158,7 +195,7 @@ def on_release(key):
 
     if key != confirm:
         last_key_time = time.time()
-        movement = {"keyboard_key": key.value, "key_time": last_key_time, "special_key": special_keys.__contains__(key) if True else False}
+        movement = {"keyboard_key": key, "key_time": last_key_time, "special_key": special_keys.__contains__(key) if True else False}
         print(movement)
         movements.append(movement)
  
