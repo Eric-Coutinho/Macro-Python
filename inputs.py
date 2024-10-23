@@ -127,8 +127,6 @@ def playMacro(movements):
 
                     special_key = next_checkpoint['keyboard_key']
 
-                    # ARRUMAR AQUI
-
                     keyboard_key = checkpoint['keyboard_key']
 
                     is_ctrl = is_ctrl_unicode(keyboard_key)
@@ -163,7 +161,7 @@ def playMacro(movements):
                     
                     keyboard_controller.release(checkpoint['keyboard_key'])
 
-        if len(checkpoints) > 1:
+        if len(checkpoints) > 1 and i < len(movements):
             print("Aperte a tecla {confirm.value} para continuar...")
             wait_for_confirm()
 
