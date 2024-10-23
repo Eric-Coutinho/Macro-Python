@@ -1,7 +1,7 @@
 import time
 from pynput import mouse, keyboard
 from pynput.mouse import Controller, Button
-from pynput.keyboard import Key, Controller as Keyboard_Controller
+from pynput.keyboard import Key, KeyCode, Controller as Keyboard_Controller
 import pyautogui
 import sys
 import os
@@ -64,8 +64,11 @@ def paste_clipboard():
     time.sleep(0.1)
     pyautogui.hotkey('ctrl', 'v')
 
-def is_ctrl_unicode(code: str) -> bool:
-    return len(code) == 1 and 0 < ord(code) <= 26
+def is_ctrl_unicode(code) -> bool:
+    if isinstance(code, KeyCode) and code.char:
+        unicode_val = ord(code.char)
+        return 1 <= unicode_val <= 26
+    return False
 
 def get_unicode_order_from_char(char: str) -> int:
     if len(char) != 1:
@@ -73,10 +76,9 @@ def get_unicode_order_from_char(char: str) -> int:
     return ord(char)
 
 def character_from_ctrl_unicode(order: int) -> str:
-    if not 0 < order < 26:
-        return
+    if not 1 <= order <= 26:
+        return ''
     pool = "abcdefghijklmnopqrstuvwxyz"
-    assert len(pool) == 26
     return pool[order-1]
 
 def playMacro(movements):
@@ -124,32 +126,30 @@ def playMacro(movements):
                     print('next: ', next_checkpoint)
 
                     special_key = next_checkpoint['keyboard_key']
+
                     # ARRUMAR AQUI
-                    print(checkpoint['keyboard_key'])
-                    is_ctrl = is_ctrl_unicode(checkpoint['keyboard_key'])
+
+                    keyboard_key = checkpoint['keyboard_key']
+
+                    is_ctrl = is_ctrl_unicode(keyboard_key)
+                    print('isctrl: ', is_ctrl)
                     
-                    if is_ctrl != -1:
-                        ctrl_code = get_unicode_order_from_char(is_ctrl)
+                    if is_ctrl:
+                        ctrl_code = get_unicode_order_from_char(keyboard_key.char)
                         char = character_from_ctrl_unicode(ctrl_code)
-                        print(char)
+                        print('char: ', char)
 
-                    # keyboard_controller.press(special_key)
+                        with keyboard_controller.pressed(next_checkpoint['keyboard_key']):
+                            keyboard_controller.press(char)
 
-                    # with keyboard_controller.pressed(next_checkpoint['keyboard_key']):
-                    #     keyboard_controller.press(checkpoint['keyboard_key'])
+                            if i > 0 and 'key_time' in checkpoint:
+                                time_press = checkpoint['key_time']
+                                time_interval = last_key_time - time_press 
 
-                    #     if i > 0 and 'key_time' in checkpoint:
-                    #         time_press = checkpoint['key_time']
-                    #         time_interval = last_key_time - time_press 
+                                if time_interval > 0:
+                                    time.sleep(time_interval)
 
-                    #         if time_interval > 0:
-                    #             time.sleep(time_interval)
-
-                    #     keyboard_controller.release(checkpoint['keyboard_key'])
-
-                    # aaa                    
-                    # bbb
-                    # ccc
+                            keyboard_controller.release(char)
 
                 else:
                     keyboard_controller.press(checkpoint['keyboard_key'])
