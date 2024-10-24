@@ -5,6 +5,7 @@ from pynput.keyboard import Key, KeyCode, Controller as Keyboard_Controller
 import pyautogui
 import sys
 import os
+import numpy as np
 
 isRunning = False
 
@@ -122,20 +123,16 @@ def playMacro(movements):
                     next_checkpoint = checkpoints[i+1]
 
                 if 'special_key' in next_checkpoint:
-                    print('current: ', checkpoint) 
-                    print('next: ', next_checkpoint)
 
                     special_key = next_checkpoint['keyboard_key']
 
                     keyboard_key = checkpoint['keyboard_key']
 
                     is_ctrl = is_ctrl_unicode(keyboard_key)
-                    print('isctrl: ', is_ctrl)
                     
                     if is_ctrl:
                         ctrl_code = get_unicode_order_from_char(keyboard_key.char)
                         char = character_from_ctrl_unicode(ctrl_code)
-                        print('char: ', char)
 
                         with keyboard_controller.pressed(next_checkpoint['keyboard_key']):
                             keyboard_controller.press(char)
@@ -148,6 +145,51 @@ def playMacro(movements):
                                     time.sleep(time_interval)
 
                             keyboard_controller.release(char)
+
+                    elif special_key == special_keys[1] or special_key == special_keys[2]:
+                        previous = []
+
+                        for previous_inputs in checkpoints[::-1]:
+                            previous.append(previous_inputs)
+
+                        print(i, previous)
+
+                        # ALT TAB FUNCIONA 1 VEZ ASSIM
+
+                        with keyboard_controller.pressed(previous[0]['keyboard_key']):
+                            keyboard_controller.press(previous[1]['keyboard_key'])
+
+                            if i > 0 and 'key_time' in checkpoint:
+                                time_press = checkpoint['key_time']
+                                time_interval = last_key_time - time_press 
+
+                                if time_interval > 0:
+                                    time.sleep(time_interval)
+
+                            keyboard_controller.release(previous[1]['keyboard_key'])
+
+                        # SEPARAR O PREVIOUS CASO TENHA MAIS DE 1 SPECIAL KEY
+
+                        # indexes = []
+                        # for item in previous:
+                        #     if item['keyboard_key'] == special_keys[1] or item['keyboard_key'] == special_keys[2]:
+                        #         indexes.append(previous.index(item))
+
+                        # list_previous = []
+                        # print('indexes: ', indexes)
+
+                        # if len(indexes) > 1:
+                        #     for i in range(0, len(indexes), 2):
+                        #         if i + 1 <= len(indexes):
+                        #             temp = previous[indexes[i] : indexes[i+1]]
+                        #             list_previous.append(temp)
+                                
+                        
+                        # print('lp: ', list_previous)
+
+                    # aaa
+                    # bbb
+                    # ccc
 
                 else:
                     keyboard_controller.press(checkpoint['keyboard_key'])
