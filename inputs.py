@@ -158,7 +158,7 @@ def playMacro(movements):
 
                         with keyboard_controller.pressed(previous[0]['keyboard_key']):
                             keyboard_controller.press(previous[1]['keyboard_key'])
-
+        
                             if i > 0 and 'key_time' in checkpoint:
                                 time_press = checkpoint['key_time']
                                 time_interval = last_key_time - time_press 
