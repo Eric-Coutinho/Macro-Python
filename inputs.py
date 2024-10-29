@@ -117,13 +117,12 @@ def playMacro(movements):
                     mouse_controller.release(Button.left)
     
             if 'keyboard_key' in checkpoint:
-                # print(checkpoint['keyboard_key'])
+                # print(checkpoint)
 
                 if i + 1 < len(checkpoints):
                     next_checkpoint = checkpoints[i+1]
 
-                if 'special_key' in next_checkpoint:
-
+                if 'special_key' == True in next_checkpoint:
                     special_key = next_checkpoint['keyboard_key']
 
                     keyboard_key = checkpoint['keyboard_key']
@@ -202,10 +201,9 @@ def playMacro(movements):
 
                         #     keyboard_controller.release(previous[1]['keyboard_key'])
 
-                    # aaa
+                    # aaaabcabc
                     # bbb
                     # ccc
-                    #    
 
                 else:
                     keyboard_controller.press(checkpoint['keyboard_key'])
@@ -218,8 +216,8 @@ def playMacro(movements):
                             time.sleep(time_interval)
                     
                     keyboard_controller.release(checkpoint['keyboard_key'])
-
-        if len(checkpoints) > 1 and i < len(movements):
+        length = len(checkpoints)
+        if length > 1 and i + 1 < length:
             print("Aperte a tecla {confirm.value} para continuar...")
             wait_for_confirm()
 
