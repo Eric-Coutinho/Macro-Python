@@ -82,6 +82,13 @@ def character_from_ctrl_unicode(order: int) -> str:
     pool = "abcdefghijklmnopqrstuvwxyz"
     return pool[order-1]
 
+def handle_alt_tab(amount):
+    with pyautogui.hold('altleft'):
+        for i in range(amount):
+            pyautogui.press('tab')
+            time.sleep(0.1)
+        time.sleep(0.3)
+
 def playMacro(movements):
     global last_click_time
 
@@ -122,7 +129,8 @@ def playMacro(movements):
                 if i + 1 < len(checkpoints):
                     next_checkpoint = checkpoints[i+1]
 
-                if 'special_key' == True in next_checkpoint:
+                if next_checkpoint['special_key'] == True:
+                    print('special')
                     special_key = next_checkpoint['keyboard_key']
 
                     keyboard_key = checkpoint['keyboard_key']
@@ -146,6 +154,7 @@ def playMacro(movements):
                             keyboard_controller.release(char)
 
                     elif special_key == special_keys[1] or special_key == special_keys[2]:
+                        # arrumar tudo depois daqui, a logica n ta boa n
                         previous = []
 
                         for previous_inputs in checkpoints[::-1]:
@@ -167,45 +176,26 @@ def playMacro(movements):
 
                         if temp_list: list_previous.append(temp_list)
 
+                        print('tl :', temp_list)
+
                         for sublist in list_previous:
                             for i, item in enumerate(sublist):
                                 if item['keyboard_key'] == Key.alt_l:
                                     sublist.insert(0, sublist.pop(i))
                                     break
 
-                        for sublist in list_previous:
-                            with keyboard_controller.pressed(sublist[0]['keyboard_key']):
-                                for key_event in sublist[1:]:
-                                    print(key_event)
-                                    keyboard_controller.press(key_event['keyboard_key'])
+                        print('sl :', sublist)
 
-                                    if 'key_time' in key_event:
-                                        time_interval = key_event['key_time'] - sublist[0]['key_time']
-                                        
-                                        if time_interval > 0:
-                                            time.sleep(time_interval)
-                                        
-                                    keyboard_controller.release(key_event['keyboard_key'])
-                        
-                        # ALT TAB FUNCIONA 1 VEZ ASSIM
+                        # handle_alt_tab(len(list_previous))
 
-                        # with keyboard_controller.pressed(previous[0]['keyboard_key']):
-                        #     keyboard_controller.press(previous[1]['keyboard_key'])
+                        # aaa
+                        # bbb
+                        # ccc
 
-                        #     if i > 0 and 'key_time' in checkpoint:
-                        #         time_press = checkpoint['key_time']
-                        #         time_interval = last_key_time - time_press 
-
-                        #         if time_interval > 0:
-                        #             time.sleep(time_interval)
-
-                        #     keyboard_controller.release(previous[1]['keyboard_key'])
-
-                    # aaaabcabc
-                    # bbb
-                    # ccc
+                        # até aqui
 
                 else:
+                    print('not special')
                     keyboard_controller.press(checkpoint['keyboard_key'])
             
                     if i > 0 and 'key_time' in checkpoint:

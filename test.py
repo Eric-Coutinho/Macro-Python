@@ -24,7 +24,7 @@ def handle_mutiple_alt_tabs(amount):
             time.sleep(0.1)
         time.sleep(0.3)
 
-pya.doubleClick(pya.position())
+# pya.doubleClick(pya.position())
 
 # list = []
 # var = copy_clipboard()
