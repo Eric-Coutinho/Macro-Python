@@ -4,7 +4,8 @@ from pynput.keyboard import Controller, Key, KeyCode
 
 class keyboard:
 
-    def __init__(self):
+    def __init__(self, stop_event):
+        self.stop_event = stop_event
         self.keyboard_inputs = []
         self.controller = Controller()
         
@@ -20,7 +21,9 @@ class keyboard:
     
     def start(self):
         self.listener.start()
-        self.listener.join()
+        while not self.stop_event.is_set():
+            pass
+        self.listener.stop()
 
     def get_listener(self):
         return self.listener
@@ -29,15 +32,21 @@ class keyboard:
         return self.keyboard_inputs
 
     def on_press(self, key):
+        if self.stop_event.is_set():
+            return
+
         print('key {0} pressed'.format(
             key))
     
     def on_release(self, key):
+        if self.stop_event.is_set():
+            return
+
         print('key {0} released'.format(
             key))
 
-        if key == kb.Key.esc:
-            print("Stoping execution")
-            self.listener.stop()
+        # if key == kb.Key.esc:
+        #     print("Stoping execution")
+        #     self.listener.stop()
 
     

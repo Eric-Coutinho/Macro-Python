@@ -4,7 +4,8 @@ from pynput.mouse import Controller, Button
 
 class mouse:
 
-    def __init__(self):
+    def __init__(self, stop_event):
+        self.stop_event = stop_event
         self.mouse_movements = []
         self.controller = Controller()
 
@@ -23,7 +24,9 @@ class mouse:
 
     def start(self):
         self.listener.start()
-        self.listener.join()
+        while not self.stop_event.is_set():
+            pass
+        self.listener.stop()
 
     def get_listener(self):
         return self.listener
@@ -32,15 +35,27 @@ class mouse:
         return self.mouse_movements
 
     def move_to(self, x, y):
+        if self.stop_event.is_set():
+            return
+
         self.controller.position = (x, y)
     
     def mouse_click(self, button):
+        if self.stop_event.is_set():
+            return
+
         self.controller.press(button)
     
     def mouse_release(self, button):
+        if self.stop_event.is_set():
+            return
+
         self.controller.release(button)
 
     def on_click(self, x, y, button, pressed):
+        if self.stop_event.is_set():
+            return
+
         try:
             if self.record_click is True:
                 current_time = time.time()
@@ -52,12 +67,13 @@ class mouse:
                     release_time = current_time
                     movement = {"mouse_released": (x, y), "time": release_time}
                 
-                if button is Button.right:
-                    # print('movements: ', self.mouse_movements)
-                    self.listener.stop()
-                
                 self.mouse_movements.append(movement)
-                print(button)
+                
+                # if button is Button.right:
+                    # print('movements: ', self.mouse_movements)
+                    # self.listener.stop()
+                
+                # print(button)
 
                 return self.mouse_movements
             else:
@@ -66,6 +82,9 @@ class mouse:
             print('Erro ao salvar clique')
     
     def on_move(self, x, y):
+        if self.stop_event.is_set():
+            return
+
         try:
             if self.record_move is True:
                 print('Pointer moved to {0}'.format(
@@ -80,6 +99,9 @@ class mouse:
             print('Erro ao salvar movimento')
 
     def on_scroll(x, y, dx, dy):
+        if self.stop_event.is_set():
+            return
+
         try:
             if self.record_scroll is True:
                 movement = {"mouse_scroll": ((x, y), (dx, dy)), "time": time.time()}
