@@ -1,9 +1,6 @@
-from pynput import mouse as ms
 import time
-
+from pynput import mouse as ms
 from pynput.mouse import Controller, Button
-
-import os
 
 class mouse:
 
@@ -21,11 +18,18 @@ class mouse:
             on_scroll = self.on_scroll
         )
 
+    def __str__(self):
+        pass
+
+    def start(self):
         self.listener.start()
         self.listener.join()
 
-    def __str__(self):
-        pass
+    def get_listener(self):
+        return self.listener
+
+    def get_movements(self):
+        return self.mouse_movements
 
     def move_to(self, x, y):
         self.controller.position = (x, y)
@@ -49,7 +53,7 @@ class mouse:
                     movement = {"mouse_released": (x, y), "time": release_time}
                 
                 if button is Button.right:
-                    print('movements: ', self.mouse_movements)
+                    # print('movements: ', self.mouse_movements)
                     self.listener.stop()
                 
                 self.mouse_movements.append(movement)
@@ -74,7 +78,6 @@ class mouse:
                 pass
         except:
             print('Erro ao salvar movimento')
-        
 
     def on_scroll(x, y, dx, dy):
         try:

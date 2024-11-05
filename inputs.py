@@ -292,7 +292,6 @@ def start_listeners():
     ) 
 
     keyboard_listener = keyboard.Listener (
-        on_scroll = on_scroll,
         on_press = on_press,
         on_release = on_release
     )
@@ -304,6 +303,3 @@ def start_listeners():
     keyboard_listener.join()
 
 start_listeners()
-
-def keep_playing_macro():
-    pass
