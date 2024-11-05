@@ -26,27 +26,52 @@ class keyboard:
         self.listener.stop()
 
     def get_listener(self):
-        return self.listener
+        if self is not None:
+            return self.listener
+        return None
     
     def get_inputs(self):
-        return self.keyboard_inputs
+        if self is not None:
+            return self.keyboard_inputs
+        return None
 
     def on_press(self, key):
         if self.stop_event.is_set():
             return
 
-        print('key {0} pressed'.format(
-            key))
+        try:
+
+            current_time = time.time()
+            movement = {"press": key, "time": current_time}
+            self.keyboard_inputs.append(movement)
+        except:
+            print("Erro ao salvar press")
+
     
     def on_release(self, key):
         if self.stop_event.is_set():
             return
+        
+        try:
+            current_time = time.time()
+            movement = {"release": key, "time": current_time}
+            self.keyboard_inputs.append(movement)
+        except:
+            print('Erro ao salvar input')
 
-        print('key {0} released'.format(
-            key))
+    def remove_duplicate_presses(self, inputs):
+        cleaned_inputs = []
+        press_added = False
 
-        # if key == kb.Key.esc:
-        #     print("Stoping execution")
-        #     self.listener.stop()
+        for event in inputs:
+            if 'release' in event:
+                cleaned_inputs.append(event)
+                press_added = False
 
-    
+            elif 'press' in event and not press_added:
+                cleaned_inputs.append(event)
+                press_added = True
+        
+        cleaned_inputs.pop()
+
+        return cleaned_inputs
