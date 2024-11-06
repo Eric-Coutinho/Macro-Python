@@ -27,7 +27,7 @@ if __name__ == "__main__":
 player = player(mouse_instance, keyboard_instance)
 
 player.sort_all_movements()
+player.split_by_checkpoint()
+# print('movimentos splitados: ', player.split_by_checkpoint())
 
-print('todos os movimentos: ', player.get_all_movements())
-
-# 
+# aaa
