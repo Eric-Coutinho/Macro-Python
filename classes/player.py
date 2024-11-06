@@ -2,9 +2,16 @@ class player:
     def __init__(self, mouse_instance = None, keyboard_instance = None):
         self.mouse_instance = mouse_instance
         self.keyboard_instance = keyboard_instance
+        self.all_movements = []
 
     def __str__(self):
         pass
+
+    def get_all_movements(self):
+        return self.all_movements
+    
+    def print_all_movements(self):
+        print(self.all_movements)
 
     def sort_all_movements(self):
         if self.mouse_instance is None and self.keyboard_instance is None:
@@ -19,12 +26,11 @@ class player:
         if self.keyboard_instance is not None:
             key_inputs = self.keyboard_instance.remove_duplicate_presses(self.keyboard_instance.get_inputs())
 
-        all_movements = clicks + movements + scrolls + key_inputs
-        all_movements.sort(key=lambda x: x['time'])
+        self.all_movements = clicks + movements + scrolls + key_inputs
+        self.all_movements.sort(key=lambda x: x['time'])
 
-        return all_movements
+        return self.all_movements
         
     def play_movements(self, movements):
         for movement in movements:
             pass
-        

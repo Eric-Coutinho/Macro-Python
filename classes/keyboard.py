@@ -16,6 +16,8 @@ class keyboard:
             on_release = self.on_release
         )
 
+        self.confirm = kb.Key.right
+
     def __str__(self):
         pass
     
@@ -40,9 +42,12 @@ class keyboard:
             return
 
         try:
-
             current_time = time.time()
-            movement = {"device": "keyboard", "press": key, "time": current_time}
+            if key == self.confirm:
+                movement = {"device": "checkpoint", "press": key, "time": current_time}
+            else:
+                movement = {"device": "keyboard", "press": key, "time": current_time}
+
             self.keyboard_inputs.append(movement)
         except:
             print("Erro ao salvar press")
@@ -53,7 +58,11 @@ class keyboard:
         
         try:
             current_time = time.time()
-            movement = {"device": "keyboard", "release": key, "time": current_time}
+            if key == self.confirm:
+                movement = {"device": "checkpoint", "release": key, "time": current_time}
+            else:
+                movement = {"device": "keyboard", "release": key, "time": current_time}
+
             self.keyboard_inputs.append(movement)
         except:
             print('Erro ao salvar input')

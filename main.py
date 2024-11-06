@@ -9,6 +9,7 @@ if __name__ == "__main__":
 
     mouse_instance = mouse(stop_event)
     keyboard_instance = keyboard(stop_event)
+    player_instance = player(mouse_instance, keyboard_instance)
     control_instance = control(stop_event)
 
     mouse_thread = Thread(target=mouse_instance.start)
@@ -27,4 +28,6 @@ player = player(mouse_instance, keyboard_instance)
 
 player.sort_all_movements()
 
-# asd
+print('todos os movimentos: ', player.get_all_movements())
+
+# 
