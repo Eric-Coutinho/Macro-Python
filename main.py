@@ -23,9 +23,8 @@ if __name__ == "__main__":
     control_thread.join()
 
 movements = mouse_instance.get_movements()
-print('mouse movements: ', movements)
 
 clean_inputs = keyboard_instance.remove_duplicate_presses(keyboard_instance.get_inputs())
 print('clean keyboard inputs: ', clean_inputs)
 
-# aaaaaaaaaaaaaaaaaaaaaa
+# 

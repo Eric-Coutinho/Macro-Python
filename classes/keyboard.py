@@ -61,17 +61,20 @@ class keyboard:
 
     def remove_duplicate_presses(self, inputs):
         cleaned_inputs = []
-        press_added = False
+        pressed_keys = set()
 
         for event in inputs:
             if 'release' in event:
+                key = event['release']
                 cleaned_inputs.append(event)
-                press_added = False
+                pressed_keys.discard(key)
 
-            elif 'press' in event and not press_added:
-                cleaned_inputs.append(event)
-                press_added = True
+            elif 'press' in event:
+                key = event['press']
+                if key not in pressed_keys:
+                    cleaned_inputs.append(event)
+                    pressed_keys.add(key)
         
-        cleaned_inputs.pop()
+        # cleaned_inputs.pop()
 
         return cleaned_inputs
