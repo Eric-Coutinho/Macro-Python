@@ -2,6 +2,7 @@ from threading import Thread, Event
 from classes.mouse import mouse
 from classes.keyboard import keyboard
 from classes.control import control
+from classes.player import player
 
 if __name__ == "__main__":
     stop_event = Event()
@@ -22,9 +23,8 @@ if __name__ == "__main__":
     keyboard_thread.join()
     control_thread.join()
 
-movements = mouse_instance.get_movements()
+player = player(mouse_instance, keyboard_instance)
 
-clean_inputs = keyboard_instance.remove_duplicate_presses(keyboard_instance.get_inputs())
-print('clean keyboard inputs: ', clean_inputs)
+player.sort_all_movements()
 
-# 
+# asd

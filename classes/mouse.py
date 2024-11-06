@@ -8,7 +8,7 @@ class mouse:
         self.stop_event = stop_event
         self.mouse_movements = []
         self.mouse_clicks = []
-        self.mouse_scroll = []
+        self.mouse_scrolls = []
         self.controller = Controller()
 
         self.record_click = True
@@ -22,7 +22,7 @@ class mouse:
         )
 
     def __str__(self):
-        pass
+        return f'mouse_movements: {self.mouse_movements}\nmouse_clicks: {self.mouse_clicks}\nmouse_scrolls: {self.mouse_scrolls}\n'
 
     def start(self):
         self.listener.start()
@@ -38,6 +38,16 @@ class mouse:
     def get_movements(self):
         if self is not None:
             return self.mouse_movements
+        return None
+
+    def get_clicks(self):
+        if self is not None:
+            return self.mouse_clicks
+        return None
+    
+    def get_scrolls(self):
+        if self is not None:
+            return self.mouse_scrolls
         return None
 
     def move_to(self, x, y):
@@ -64,14 +74,10 @@ class mouse:
 
         try:
             if self.record_click is True:
-                current_time = time.time()
-
                 if pressed:
-                    click_time = current_time
-                    click = {"click": (x, y), "time": click_time}
+                    click = {"device": "mouse", "click": (x, y), "time": time.time(), "button": button}
                 else:
-                    release_time = current_time
-                    click = {"release": (x, y), "time": release_time}
+                    click = {"device": "mouse", "release": (x, y), "time": time.time(), "button": button}
                 
                 self.mouse_clicks.append(click)
 
@@ -87,8 +93,7 @@ class mouse:
 
         try:
             if self.record_move is True:
-                current_time = time.time()
-                movement = {"move": (x, y), "time": current_time}
+                movement = {"device": "mouse", "move": (x, y), "time": time.time()}
                 self.mouse_movements.append(movement)
 
                 return self.mouse_movements
@@ -103,7 +108,7 @@ class mouse:
 
         try:
             if self.record_scroll is True:
-                movement = {"scroll": ((x, y), (dx, dy)), "time": time.time()}
+                movement = {"device": "mouse", "scroll": ((x, y), (dx, dy)), "time": time.time()}
                 self.mouse_scroll.append(movement)
 
                 return self.mouse_scroll

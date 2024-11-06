@@ -42,19 +42,18 @@ class keyboard:
         try:
 
             current_time = time.time()
-            movement = {"press": key, "time": current_time}
+            movement = {"device": "keyboard", "press": key, "time": current_time}
             self.keyboard_inputs.append(movement)
         except:
             print("Erro ao salvar press")
 
-    
     def on_release(self, key):
         if self.stop_event.is_set():
             return
         
         try:
             current_time = time.time()
-            movement = {"release": key, "time": current_time}
+            movement = {"device": "keyboard", "release": key, "time": current_time}
             self.keyboard_inputs.append(movement)
         except:
             print('Erro ao salvar input')
@@ -75,6 +74,6 @@ class keyboard:
                     cleaned_inputs.append(event)
                     pressed_keys.add(key)
         
-        # cleaned_inputs.pop()
+        cleaned_inputs.pop()
 
         return cleaned_inputs
