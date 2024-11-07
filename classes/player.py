@@ -1,3 +1,5 @@
+import time
+
 class player:
     def __init__(self, mouse_instance = None, keyboard_instance = None):
         self.mouse_instance = mouse_instance
@@ -66,7 +68,10 @@ class player:
         self.split_by_checkpoint()
 
         for checkpoint in self.get_all_movements():
-            for movement in checkpoint:
+            for i, movement in enumerate(checkpoint):
+                if i + 1 <= len(movement):
+                    next_movement = checkpoint[i+1]
+
                 keys = list(movement)
                 values = list(movement.values())
                 match values[0]:
@@ -100,6 +105,11 @@ class player:
 
                     case _:
                         print('Houve um erro ao reproduzir os movimentos')
+            
+                if next_movement:
+                    time_diff = next_movement['time'] - movement['time']
+                    time.sleep(time_diff)
+            
     
     def play_movements_except(self, types):
         self.sort_all_movements()
