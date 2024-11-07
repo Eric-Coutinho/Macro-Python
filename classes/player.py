@@ -58,4 +58,56 @@ class player:
                 self.all_movements = []
 
         self.set_all_movements(hold_array)
-        print('\nall movements final: ', hold_array)
+        self.print_all_movements()
+
+    def play_all_movements(self):
+        self.sort_all_movements()
+
+        self.split_by_checkpoint()
+
+        for checkpoint in self.get_all_movements():
+            for movement in checkpoint:
+                keys = list(movement)
+                values = list(movement.values())
+                match values[0]:
+                    case 'mouse':
+                        match keys[1]:
+                            case 'click':
+                                pass # Ajustar lógica de repetir o click aqui
+
+                            case 'release':
+                                pass # Ajustar lógica de repetir o release do click aqui
+
+                            case 'move':
+                                pass # Ajustar lógica de repetir o movimento do mouse aqui
+
+                            case 'scroll':
+                                pass # Ajustar lógica de repetir o scroll aqui
+
+                            case _:
+                                print('Houve um erro ao reproduzir os movimentos')
+
+                    case 'keyboard':
+                        match keys[1]:
+                            case 'press':
+                                pass # Ajustar lógica de repetir a tecla pressionada aqui
+
+                            case 'release':
+                                pass # Ajustar lógica de repetir o release da tecla aqui
+
+                            case _:
+                                print('Houve um erro ao reproduzir os movimentos')
+
+                    case _:
+                        print('Houve um erro ao reproduzir os movimentos')
+    
+    def play_movements_except(self, types):
+        self.sort_all_movements()
+        
+        self.split_by_checkpoint()
+        for movement in self.get_all_movements():
+            for movement_type in types:
+                if movement_type in movement:
+                    pass
+                else:
+                    pass # Continuar aqui
