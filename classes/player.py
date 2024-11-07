@@ -38,25 +38,24 @@ class player:
         hold_array = []
 
         while self.all_movements:
-            self.print_all_movements()
-
             temp_array = []
             checkpoint_found = False
 
             for i, movement in enumerate(self.all_movements):
-                # Verifica se o movimento é de um checkpoint com release
                 if movement['device'] == 'checkpoint' and 'release' in movement:
-                    # Se encontrar o checkpoint, divide a lista até esse ponto
-                    temp_array = self.all_movements[:i + 1]  # Inclui o checkpoint de release
-                    self.all_movements = self.all_movements[i + 1:]  # Restante da lista após o checkpoint
-                    hold_array.append(temp_array)  # Adiciona a parte à lista de partes
+                    temp_array = self.all_movements[:i - 1]
+
+                    self.all_movements = self.all_movements[i + 1:]
+
+                    hold_array.append(temp_array)
+
                     checkpoint_found = True
+
                     break
 
             if not checkpoint_found:
-                # Se não encontrar mais nenhum checkpoint, adiciona o restante dos movimentos
                 hold_array.append(self.all_movements)
-                self.all_movements = []  # Limpa a lista para terminar o loop
+                self.all_movements = []
 
         self.set_all_movements(hold_array)
         print('\nall movements final: ', hold_array)
