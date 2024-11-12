@@ -1,5 +1,4 @@
 import time
-
 class player:
     def __init__(self, mouse_instance = None, keyboard_instance = None):
         self.mouse_instance = mouse_instance
@@ -121,3 +120,7 @@ class player:
                 if next_movement:
                     time_diff = next_movement['time'] - movement['time']
                     time.sleep(time_diff)
+
+            # self.wait_for_confim()
+        
+        os._exit(1)
