@@ -26,12 +26,11 @@ class player:
         if self.mouse_instance is not None:
             clicks = self.mouse_instance.get_clicks()
             movements = self.mouse_instance.get_movements()
-            scrolls = self.mouse_instance.get_scrolls()
 
         if self.keyboard_instance is not None:
             key_inputs = self.keyboard_instance.remove_duplicate_presses(self.keyboard_instance.get_inputs())
 
-        self.all_movements = clicks + movements + scrolls + key_inputs
+        self.all_movements = clicks + movements + key_inputs
         self.all_movements.sort(key=lambda x: x['time'])
 
         return self.all_movements
@@ -62,46 +61,59 @@ class player:
         self.set_all_movements(hold_array)
         self.print_all_movements()
 
-    def play_all_movements(self):
+    def play_all_movements(self, actions_not_playable = []):
         self.sort_all_movements()
-
         self.split_by_checkpoint()
 
         for checkpoint in self.get_all_movements():
+            print('checkpoint: ', checkpoint)
             for i, movement in enumerate(checkpoint):
-                if i + 1 <= len(movement):
+                if i + 1 < len(checkpoint):
                     next_movement = checkpoint[i+1]
 
                 keys = list(movement)
                 values = list(movement.values())
+                # print('keys', keys)
+
+                skip = False
+
+                for j in range(len(actions_not_playable)):
+                    if keys[1] == actions_not_playable[j]:
+                        skip = True
+                        break
+
+                if skip == True:
+                    continue
+
                 match values[0]:
                     case 'mouse':
                         match keys[1]:
                             case 'click':
-                                pass # Ajustar lógica de repetir o click aqui
+                                self.mouse_instance.mouse_click(values[3])
+                                print('click', values[3])
 
                             case 'release':
-                                pass # Ajustar lógica de repetir o release do click aqui
+                                self.mouse_instance.mouse_release(values[3])
+                                print('release', values[3])
 
                             case 'move':
-                                pass # Ajustar lógica de repetir o movimento do mouse aqui
-
-                            case 'scroll':
-                                pass # Ajustar lógica de repetir o scroll aqui
+                                self.mouse_instance.move_to(values[1])
 
                             case _:
-                                print('Houve um erro ao reproduzir os movimentos')
+                                print('Houve um erro ao reproduzir os movimentos do mouse')
 
                     case 'keyboard':
                         match keys[1]:
                             case 'press':
-                                pass # Ajustar lógica de repetir a tecla pressionada aqui
+                                self.keyboard_instance.key_input(values[1])
+                                print('press', values[1])
 
                             case 'release':
-                                pass # Ajustar lógica de repetir o release da tecla aqui
+                                self.keyboard_instance.key_release(values[1])
+                                print('release', values[1])
 
                             case _:
-                                print('Houve um erro ao reproduzir os movimentos')
+                                print('Houve um erro ao reproduzir os movimentos do teclado')
 
                     case _:
                         print('Houve um erro ao reproduzir os movimentos')
@@ -109,15 +121,3 @@ class player:
                 if next_movement:
                     time_diff = next_movement['time'] - movement['time']
                     time.sleep(time_diff)
-            
-    
-    def play_movements_except(self, types):
-        self.sort_all_movements()
-        
-        self.split_by_checkpoint()
-        for movement in self.get_all_movements():
-            for movement_type in types:
-                if movement_type in movement:
-                    pass
-                else:
-                    pass # Continuar aqui

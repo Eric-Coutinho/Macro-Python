@@ -22,12 +22,9 @@ if __name__ == "__main__":
 
     mouse_thread.join()
     keyboard_thread.join()
-    control_thread.join()
+    control_thread.join()    
 
 player = player(mouse_instance, keyboard_instance)
-
-# player.sort_all_movements()
-# player.split_by_checkpoint()
 player.play_all_movements()
 
-# aaa
+# asasas

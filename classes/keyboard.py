@@ -83,6 +83,15 @@ class keyboard:
                     cleaned_inputs.append(event)
                     pressed_keys.add(key)
         
+        # if len(cleaned_inputs) + 1 < len(cleaned_inputs):
+            # cleaned_inputs.pop()
+        
         cleaned_inputs.pop()
 
         return cleaned_inputs
+
+    def key_input(self, key):
+        self.controller.press(key)
+
+    def key_release(self, key):        
+        self.controller.press(key)
