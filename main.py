@@ -7,10 +7,10 @@ from classes.player import player
 if __name__ == "__main__":
     stop_event = Event()
 
+    control_instance = control(stop_event)
     mouse_instance = mouse(stop_event)
     keyboard_instance = keyboard(stop_event)
-    player_instance = player(mouse_instance, keyboard_instance)
-    control_instance = control(stop_event)
+    player_instance = player(mouse_instance=mouse_instance, keyboard_instance=keyboard_instance, control_instance=control_instance)
 
     mouse_thread = Thread(target=mouse_instance.start)
     keyboard_thread = Thread(target=keyboard_instance.start)
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     keyboard_thread.join()
     control_thread.join()    
 
-player = player(mouse_instance, keyboard_instance)
+player = player(mouse_instance, keyboard_instance, control_instance=control_instance)
 player.play_all_movements()
 
-# asasas
+# asasasaass
